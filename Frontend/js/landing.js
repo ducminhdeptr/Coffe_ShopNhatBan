@@ -71,11 +71,17 @@ function renderMenuItems(products) {
     const grid = document.getElementById('menu-grid');
     if (!grid) return;
     
-    const icons = { 1: '☕', 2: '🍵', 3: '🍰' };
+    const imagePaths = {
+        1: '/images/menu-coffee.png',
+        2: '/images/menu-matcha.png',
+        3: '/images/menu-dessert.png'
+    };
     
     grid.innerHTML = products.map(p => `
         <div class="glass-card menu-card reveal">
-            <div class="menu-icon">${icons[p.categoryID] || '☕'}</div>
+            <div class="menu-card-image">
+                <img src="${imagePaths[p.categoryID] || '/images/menu-coffee.png'}" alt="${p.productName}" loading="lazy">
+            </div>
             <div class="menu-card-info">
                 <h4>${p.productName}</h4>
                 <p>${p.description || ''}</p>
