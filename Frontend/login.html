@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login | 夜カフェ Yoru Cafe</title>
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/animations.css">
+    <style>
+        .login-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--color-bg-primary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-page::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 40%, rgba(212, 168, 71, 0.05) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 60%, rgba(139, 105, 20, 0.04) 0%, transparent 50%);
+            animation: breathe 8s ease-in-out infinite;
+        }
+
+        .login-card {
+            position: relative;
+            width: 100%;
+            max-width: 420px;
+            padding: var(--space-3xl);
+            text-align: center;
+            z-index: 2;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .login-logo {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            color: var(--color-gold);
+            margin-bottom: var(--space-sm);
+        }
+
+        .login-logo-sub {
+            font-family: var(--font-ui);
+            font-size: 0.7rem;
+            letter-spacing: 0.5em;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            margin-bottom: var(--space-3xl);
+        }
+
+        .login-title {
+            font-family: var(--font-ui);
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--color-text-secondary);
+            margin-bottom: var(--space-2xl);
+        }
+
+        .login-form .form-group {
+            margin-bottom: var(--space-lg);
+            text-align: left;
+        }
+
+        .login-form label {
+            display: block;
+            font-size: 0.75rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--color-text-muted);
+            margin-bottom: var(--space-xs);
+            font-family: var(--font-ui);
+        }
+
+        .login-form input {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--color-bg-tertiary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            color: var(--color-text-primary);
+            font-size: 0.95rem;
+            transition: border-color var(--transition-fast);
+            font-family: var(--font-ui);
+        }
+
+        .login-form input:focus {
+            border-color: var(--color-gold);
+            box-shadow: 0 0 0 3px rgba(212, 168, 71, 0.1);
+            outline: none;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            margin-top: var(--space-lg);
+            font-size: 0.95rem;
+        }
+
+        .login-error {
+            color: #ff6b6b;
+            font-size: 0.85rem;
+            margin-top: var(--space-md);
+            min-height: 20px;
+        }
+
+        .login-back {
+            margin-top: var(--space-xl);
+            font-size: 0.85rem;
+        }
+
+        .login-hint {
+            margin-top: var(--space-lg);
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+            background: var(--color-bg-tertiary);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--color-border);
+        }
+    </style>
+</head>
+<body>
+    <div class="login-page">
+        <div class="glass login-card">
+            <div class="login-logo">夜カフェ</div>
+            <div class="login-logo-sub">Admin Dashboard</div>
+            <h2 class="login-title">Đăng nhập quản trị</h2>
+            
+            <form class="login-form" id="login-form">
+                <div class="form-group">
+                    <label for="username">Tên đăng nhập</label>
+                    <input type="text" id="username" placeholder="admin" required autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label for="password">Mật khẩu</label>
+                    <input type="password" id="password" placeholder="••••••••" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn btn-primary login-btn" id="login-btn">
+                    Đăng Nhập
+                </button>
+                <div class="login-error" id="login-error"></div>
+            </form>
+
+            <div class="login-hint">
+                <strong>Demo:</strong> admin / admin123
+            </div>
+
+            <div class="login-back">
+                <a href="/">← Về trang chủ</a>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { login } from '/js/api.js';
+        import { saveAuth, isAuthenticated } from '/js/auth.js';
+
+        // Redirect if already logged in
+        if (isAuthenticated()) {
+            window.location.href = '/admin.html';
+        }
+
+        const form = document.getElementById('login-form');
+        const errorEl = document.getElementById('login-error');
+        const loginBtn = document.getElementById('login-btn');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            errorEl.textContent = '';
+            loginBtn.textContent = 'Đang đăng nhập...';
+            loginBtn.disabled = true;
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const data = await login(username, password);
+                saveAuth(data.token, data.username);
+                
+                loginBtn.textContent = '✓ Thành công!';
+                loginBtn.style.background = 'linear-gradient(135deg, #27ae60, #2ecc71)';
+                
+                setTimeout(() => {
+                    window.location.href = '/admin.html';
+                }, 500);
+            } catch (err) {
+                errorEl.textContent = err.response?.data?.message || 'Đăng nhập thất bại. Vui lòng thử lại.';
+                loginBtn.textContent = 'Đăng Nhập';
+                loginBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

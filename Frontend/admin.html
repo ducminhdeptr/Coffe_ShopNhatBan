@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | 夜カフェ Yoru Cafe</title>
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/animations.css">
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- ===== SIDEBAR ===== -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <div class="logo">夜カフェ</div>
+                <div class="sub">Admin Panel</div>
+            </div>
+            <ul class="sidebar-nav">
+                <li><a href="#" class="active" data-section="dashboard">
+                    <span class="nav-icon">📊</span> Dashboard
+                </a></li>
+                <li><a href="#" data-section="products">
+                    <span class="nav-icon">☕</span> Sản phẩm
+                </a></li>
+                <li><a href="#" data-section="orders">
+                    <span class="nav-icon">📋</span> Đơn hàng
+                </a></li>
+                <li><a href="/">
+                    <span class="nav-icon">🌐</span> Xem Landing Page
+                </a></li>
+            </ul>
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="avatar" id="user-avatar">A</div>
+                    <div class="user-info">
+                        <div class="name" id="user-name">Admin</div>
+                        <div class="role">Quản trị viên</div>
+                    </div>
+                    <button class="logout-btn" id="logout-btn" title="Đăng xuất">⏻</button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ===== MAIN CONTENT ===== -->
+        <main class="main-content">
+            <!-- Header -->
+            <div class="main-header">
+                <h1 id="page-title">Dashboard</h1>
+                <div class="header-right">
+                    <span class="header-date" id="current-date"></span>
+                </div>
+            </div>
+
+            <!-- ===== VIEW: DASHBOARD ===== -->
+            <div id="dashboard-view" class="admin-view">
+                <!-- KPI Cards -->
+                <div class="kpi-grid" id="kpi-grid">
+                    <div class="glass-card kpi-card">
+                        <div class="kpi-top">
+                            <span class="kpi-label">Tổng sản phẩm</span>
+                            <div class="kpi-icon">☕</div>
+                        </div>
+                        <div class="kpi-value" id="kpi-products">0</div>
+                        <div class="kpi-change stable">Đang hoạt động</div>
+                    </div>
+                    <div class="glass-card kpi-card">
+                        <div class="kpi-top">
+                            <span class="kpi-label">Tổng đơn hàng</span>
+                            <div class="kpi-icon">📋</div>
+                        </div>
+                        <div class="kpi-value" id="kpi-orders">0</div>
+                        <div class="kpi-change stable">Tất cả thời gian</div>
+                    </div>
+                    <div class="glass-card kpi-card">
+                        <div class="kpi-top">
+                            <span class="kpi-label">Doanh thu tháng này</span>
+                            <div class="kpi-icon">💰</div>
+                        </div>
+                        <div class="kpi-value" id="kpi-revenue">0đ</div>
+                        <div class="kpi-change" id="kpi-revenue-change"></div>
+                    </div>
+                    <div class="glass-card kpi-card forecast">
+                        <div class="kpi-top">
+                            <span class="kpi-label">Dự báo tháng tới</span>
+                            <div class="kpi-icon">📈</div>
+                        </div>
+                        <div class="kpi-value" id="kpi-forecast">0đ</div>
+                        <div class="kpi-change" id="kpi-forecast-change"></div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="chart-section">
+                    <div class="glass-card chart-card">
+                        <div class="chart-card-header">
+                            <h3><span class="icon">📊</span> Biểu đồ doanh thu theo tháng</h3>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="revenue-chart"></canvas>
+                        </div>
+                    </div>
+                    <div class="glass-card chart-card">
+                        <div class="chart-card-header">
+                            <h3><span class="icon">🍩</span> Phân bổ danh mục</h3>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="category-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== VIEW: PRODUCTS ===== -->
+            <div id="products-view" class="admin-view" style="display: none;">
+                <div class="glass-card table-section" id="products-section">
+                    <div class="table-section-header">
+                        <div class="table-title">
+                            <h3>☕ Quản lý sản phẩm</h3>
+                            <span class="badge" id="product-count-badge">0 sản phẩm</span>
+                        </div>
+                        <div class="table-actions">
+                            <input type="text" class="search-input" id="search-input" placeholder="🔍 Tìm kiếm sản phẩm...">
+                            <button class="btn btn-primary add-btn" id="add-product-btn">
+                                <span class="plus">+</span> Thêm mới
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="data-table" id="products-table">
+                            <thead>
+                                <tr>
+                                    <th class="cell-id">ID</th>
+                                    <th>Tên sản phẩm</th>
+                                    <th>Mô tả</th>
+                                    <th>Danh mục</th>
+                                    <th>Giá</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="products-tbody">
+                                <!-- Dynamic -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== VIEW: ORDERS ===== -->
+            <div id="orders-view" class="admin-view" style="display: none;">
+                <div class="glass-card table-section" id="orders-section">
+                    <div class="table-section-header">
+                        <div class="table-title">
+                            <h3>📋 Danh sách đơn hàng</h3>
+                            <span class="badge" id="order-count-badge">0 đơn hàng</span>
+                        </div>
+                        <div class="table-actions">
+                            <input type="text" class="search-input" id="order-search-input" placeholder="🔍 Tìm theo ID đơn hàng...">
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="data-table" id="orders-table">
+                            <thead>
+                                <tr>
+                                    <th class="cell-id">ID</th>
+                                    <th>Thời gian</th>
+                                    <th>Tóm tắt món đặt</th>
+                                    <th>Tổng tiền</th>
+                                    <th>Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody id="orders-tbody">
+                                <!-- Dynamic -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ===== ADD/EDIT PRODUCT MODAL ===== -->
+    <div class="modal-overlay" id="product-modal">
+        <div class="glass modal">
+            <div class="modal-header">
+                <h3 id="modal-title">Thêm sản phẩm mới</h3>
+                <button class="modal-close" id="modal-close-btn">&times;</button>
+            </div>
+            <form id="product-form">
+                <input type="hidden" id="edit-product-id">
+                <div class="form-group">
+                    <label for="prod-name">Tên sản phẩm</label>
+                    <input type="text" id="prod-name" placeholder="Espresso Nhật" required>
+                </div>
+                <div class="form-group">
+                    <label for="prod-desc">Mô tả</label>
+                    <textarea id="prod-desc" placeholder="Mô tả sản phẩm..." rows="3" style="resize:vertical;"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="prod-category">Danh mục</label>
+                    <select id="prod-category" required>
+                        <option value="">-- Chọn danh mục --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="prod-price">Giá (VNĐ)</label>
+                    <input type="number" id="prod-price" placeholder="50000" required min="0">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" id="modal-cancel">Hủy</button>
+                    <button type="submit" class="btn btn-primary btn-save" style="padding: 10px 24px;">Lưu</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===== ORDER DETAILS MODAL ===== -->
+    <div class="modal-overlay" id="order-detail-modal">
+        <div class="glass modal" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3>Chi tiết đơn hàng #<span id="detail-order-id">0</span></h3>
+                <button class="modal-close" id="order-modal-close-btn">&times;</button>
+            </div>
+            <div class="order-detail-content">
+                <div class="detail-group">
+                    <span class="detail-label">Thời gian đặt:</span>
+                    <span class="detail-value" id="detail-order-date">-</span>
+                </div>
+                <div class="detail-group" style="margin-bottom: 24px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+                    <span class="detail-label">Tổng thanh toán:</span>
+                    <span class="detail-value" id="detail-order-total" style="color: var(--color-gold); font-weight: 700; font-size: 1.1rem;">0đ</span>
+                </div>
+                <h4 style="margin-bottom: 12px; font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-text-muted); font-weight: 600;">Món đã đặt</h4>
+                <div class="table-wrapper" style="border: 1px solid var(--color-border); border-radius: var(--radius-md); overflow: hidden;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Tên món</th>
+                                <th style="text-align: center; width: 80px;">Số lượng</th>
+                                <th style="text-align: right; width: 120px;">Thành tiền</th>
+                            </tr>
+                        </thead>
+                        <tbody id="detail-order-items-tbody">
+                            <!-- Dynamic -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-actions" style="margin-top: 24px;">
+                <button type="button" class="btn-cancel" id="order-detail-close">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== TOAST CONTAINER ===== -->
+    <div id="toast-container" style="position: fixed; bottom: 24px; right: 24px; z-index: 10000; display: flex; flex-direction: column; gap: 10px;"></div>
+
+    <script type="module" src="/js/admin.js"></script>
+</body>
+</html>
